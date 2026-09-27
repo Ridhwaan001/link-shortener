@@ -57,6 +57,12 @@
             <td>{{ link.link }}</td>
             <td>{{ new Date(link.created) }}</td>
             <td>
+              <button
+                class="btn btn-outline-secondary"
+                @click="edit(link.code)">
+                Edit
+              </button>
+              &nbsp;
               <button class="btn btn-outline-danger" @click="remove(link.code)">
                 Delete
               </button>
@@ -140,6 +146,29 @@ async function remove(code: string) {
       loading.value = false;
       await refreshNuxtData("loading");
     }
+  }
+}
+
+async function edit(code: string) {
+  loading.value = true;
+  await refreshNuxtData("loading");
+
+  const newCode = prompt("Please enter new short link", code);
+
+  if (!newCode) return;
+
+  let response = await useFetch("/api/manage/edit", {
+    method: "POST",
+    body: { old: code, new: newCode },
+  });
+
+  if (response && response.status.value === "success") {
+    data.value = response.data.value as any as shortLink[];
+    loading.value = false;
+    await refreshNuxtData(["loading", "data"]);
+  } else {
+    loading.value = false;
+    await refreshNuxtData("loading");
   }
 }
 </script>

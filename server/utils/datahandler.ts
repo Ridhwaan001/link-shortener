@@ -32,6 +32,10 @@ export const getLink = database.prepare(`
     SELECT * FROM links WHERE code = ?
     `);
 
+export const editLink = database.prepare(
+  "UPDATE links SET code = ? WHERE code = ?",
+);
+
 export const getAll = database.prepare(`SELECT * FROM links`);
 
 export function makeid(length: number) {
